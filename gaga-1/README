@@ -1,0 +1,7 @@
+
+There are four subdirectories:
+
+  camera    Software to drive the Canon A560 camera
+  flight    Software for the main flight computer
+  recovery  Software for the recovery backup computer
+  board     Flight computer circuit board
