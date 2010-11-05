@@ -24,22 +24,30 @@ def init():
 #
 # utc, altitude, course and speed converted to float
 # satellites converted to int
-# utc left as string
-# longitude and latitude converted to decimal degrees (TODO)
+# longitude and latitude converted to decimal degrees
 
 def get():
     p = GPS.getActualPosition()
-    logger.log( 'gps.get() -> %s' % p )
+    logger.log( 'gps2.get() -> %s' % p )
     a = p.strip().split(',')
-    if ( len(a) == 11 ):
-        return { 'latitude'   : a[1],
-                 'longitude'  : a[2], 
+    if len(a) == 11 and int(a[5]) == 3:
+        global lastaltitude
+        latd = int(a[1][0:2])
+        latm = float(a[1][2:-1])
+        latc = a[1][-1]
+        lat = '%.4f%s' % ( latd + latm / 60, latc )
+        lond = int(a[2][0:3])
+        lonm = float(a[2][3:-1])
+        lonc = a[2][-1]
+        lon = '%.4f%s' % ( lond + lonm / 60, lonc )
+        return { 'latitude'   : lat,
+                 'longitude'  : lon,
                  'altitude'   : float(a[4]),
-                 'utc'        : float(a[0].lstrip('0')),
+                 'utc'        : float(a[0]),
                  'course'     : float(a[6]),
-                 'satellites' : int(a[10].lstrip('0')),
+                 'satellites' : int(a[10]),
                  'speed'      : float(a[7]),
-                 'valid'      : (int(a[5]) == 3)
+                 'valid'      : 1
                  }
     else:
         return { 'valid': 0 }

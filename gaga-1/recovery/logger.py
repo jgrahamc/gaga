@@ -9,13 +9,16 @@ log_file = 'gaga-1.log'
 
 # Writes a message to the log file and sends it to the serial port.
 # In flight the serial port will do nothing and the log file will keep
-# a record of what happened.  In debugging the serial port
+# a record of what happened.  In debugging the serial port is written
+# to.
 
 def log(m):
     t = MOD.secCounter()
-    d = '%d: %s\r\n' % (t, m)
+    d = '%d: %s\r' % (t, m)
     SER.send(d)
-    f = open( log_file, 'a' )
-    f.write(d)
-    f.close()
-
+    try:
+        f = open( log_file, 'a' )
+        f.write(d)
+        f.close()
+    except:
+        return

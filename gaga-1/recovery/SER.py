@@ -5,4 +5,3 @@
 
 def send(a):
     print a
-    return 1

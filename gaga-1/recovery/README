@@ -1,2 +1,22 @@
-
 The backup computer used for recovery.
+
+1. To use this it needs to be uploaded to the GM862 which is achieved
+by 'make upload'.
+
+2. A simulated flight can also be run by doing 'make test'.  This is
+achieved by the uppercase modules (SER, MDM, MOD, GPS) acting like a
+GM862 (including random errors)
+
+3. You must create a file called 'phone.py' with a single function
+number() that returns the number you want SMS messages sent to as a
+string:
+
+def number():
+    return '+447000000000'
+
+
+TODO
+
+1. Need to contact Telit and ask them what happens to GPS access above
+the COCOM limit to make sure gps2 module handles the failure more
+correctly.

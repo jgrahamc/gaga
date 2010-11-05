@@ -29,3 +29,6 @@ upload: $(UPL)
 	@echo Uploading $<
 	@./upload.pl $< $(if $(subst $(firstword $(TO_UPL)),,$<),,1)
 	@touch $@
+
+.PHONY: test
+	@python gaga-1.py

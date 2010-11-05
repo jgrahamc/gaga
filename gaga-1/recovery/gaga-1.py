@@ -28,13 +28,14 @@ import util
 def report_position(p):
     v = gps2.voltage()
     t = util.temperature()
+    i = '(%dmV, %dC)' % ( v, t )
 
     if p['valid']:
-        send_sms( 'Position %s %s %f %f %f (%d, %d)' % ( p['latitude'],
-                  p['longitude'], p['altitude'], p['course'], p['speed'], v,
-                  t ) )
+        send_sms( '%s %s %.2fm %.2fdeg %.2fkph %dsats %s' % ( p['latitude'],
+                  p['longitude'], p['altitude'], p['course'], p['speed'], 
+                  p['satellites'], i ) )
     else:
-        send_sms( 'No GPS lock (%d, %d)' % ( v, t ) ) 
+        send_sms( 'No GPS lock %s' % i ) 
 
 # Performs a state transition updating the global state variable and
 # SMSing the new state
@@ -44,7 +45,7 @@ def set_state(s):
      state = s
      send_sms( 'Transition to state %s' % s )
 
-# Wrapper for the sms.send command so tha the phone number need only
+# Wrapper for the sms.send command so that the phone number need only
 # be entered in one place.  Note that the phone number for SMS
 # messages comes from the phone module which implements a single
 # function, number(), that returns a string containing the phone
@@ -87,7 +88,6 @@ gps2.init()
 #   Recovery: get GPS position every 1 minute and SMS
 
 while 1:
-    delay = 1
     position = gps2.get()
 
     if state == 'LAUNCH':
@@ -98,12 +98,17 @@ while 1:
         report_position(position)
         if position['valid'] and ( position['altitude'] > flight_altitude ):
             set_state( 'FLIGHT' )
-        delay = 2
     elif state == 'FLIGHT':
         if position['valid'] and ( position['altitude'] < recovery_altitude ):
             set_state( 'RECOVERY' )
-        delay = 5
     elif state == 'RECOVERY':
         report_position(position)
-    
+
+    if state == 'LAUNCH' or state == 'RECOVERY':
+        delay = 1
+    elif state == 'ASCENT':
+        delay = 2
+    else:
+        delay = 5
+
     MOD.sleep(delay * 600)

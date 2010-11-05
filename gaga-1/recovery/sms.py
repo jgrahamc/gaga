@@ -35,8 +35,13 @@ def can():
 # Send a message to a specified phone number
 
 def send(phone, text):
-    logger.log( 'sms.send(%s,%s)' % ( phone, text ) )
-#    if can():
-#        r = at.cmd( 'AT+CMGS="%s"' % phone )
-#        if r == '\r\n> ':
-#            r = at.raw( '%s\x1A' % text )
+    logger.log( 'sms.send(%s...,"%s")' % ( phone[0:4], text ) )
+    if can():
+        r = at.cmd( 'AT+CMGS="%s"' % phone )
+        if r == '\r\n> ':
+            r = at.raw( '%s\x1A' % text )
+        else:
+            r = at.raw( '\x1B' )
+            logger.log( 'Failed to get SMS prompt' )
+    else:
+        logger.log( 'No GSM access for SMS send' )
