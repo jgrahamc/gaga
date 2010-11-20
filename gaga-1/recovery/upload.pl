@@ -60,6 +60,18 @@ if ( $r !~ /#LSCRIPT: \"$ARGV[0]\",$size/ ) {
   die "Failed to verify that script was uploaded\n";
 }
 
+# If we are uploading a .py file instead of a .pyo check to see if
+# there's a .pyo file with the same name and delete it.  This is
+# needed because the Telit won't recompile the .py file automatically.
+
+if ( $ARGV[0] =~ /\.py$/ ) {
+    my $pyo = "$ARGV[0]o";
+    if ( $r =~ /#LSCRIPT: \"$pyo\"/ ) {
+	$r = cmd( $port, "AT#DSCRIPT=\"$pyo\"", $oke );
+	die "Failed to delete .pyo file\n" if ( $r !~ /OK/ );
+    }
+}
+
 exit 0;
 
 sub cmd

@@ -4,6 +4,7 @@
 
 import at
 import logger
+import util
 
 # Set up SMS by turning on text mode using the AT+CMGF command
 
@@ -33,13 +34,17 @@ def can():
         return ( int(m[0]) != 99 ) and ( int(m[1]) != 99 )
 
 # Send a message to a specified phone number
+#
+# Note that when sending the message the wait time for a response is
+# increased to 30 seconds as sending the SMS may take time.
 
 def send(phone, text):
     logger.log( 'sms.send(%s...,"%s")' % ( phone[0:4], text ) )
     if can():
         r = at.cmd( 'AT+CMGS="%s"' % phone )
         if r == '\r\n> ':
-            r = at.raw( '%s\x1A' % text )
+            t = util.timestamp()
+            r = at.raw( '%s: %s\x1A' % ( t, text ), 30 )
         else:
             r = at.raw( '\x1B' )
             logger.log( 'Failed to get SMS prompt' )

@@ -31,4 +31,5 @@ upload: $(UPL)
 	@touch $@
 
 .PHONY: test
+test:
 	@python gaga-1.py

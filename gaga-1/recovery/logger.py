@@ -3,7 +3,8 @@
 # Copyright (c) 2010 John Graham-Cumming
 
 import SER
-import MOD
+
+import util
 
 log_file = 'gaga-1.log'
 
@@ -13,8 +14,8 @@ log_file = 'gaga-1.log'
 # to.
 
 def log(m):
-    t = MOD.secCounter()
-    d = '%d: %s\r' % (t, m)
+    t = util.timestamp()
+    d = '%s: %s\r' % (t, m)
     SER.send(d)
     try:
         f = open( log_file, 'a' )

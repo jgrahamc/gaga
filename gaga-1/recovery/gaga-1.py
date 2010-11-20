@@ -14,10 +14,12 @@
 
 import MOD
 
+import sys
 import sms
 import gps2
 import phone
 import util
+import logger
 
 # Given a dictionary from the GPS reports the current location via SMS
 # if it is valid.  Should be passed the position from gps2.get(). 
@@ -26,12 +28,13 @@ import util
 # for battery voltage and the current module internal temperature
 
 def report_position(p):
+    global state
     v = gps2.voltage()
     t = util.temperature()
-    i = '(%dmV, %dC)' % ( v, t )
+    i = '(%dmV, %dC, %s)' % ( v, t, state )
 
     if p['valid']:
-        send_sms( '%s %s %.2fm %.2fdeg %.2fkph %dsats %s' % ( p['latitude'],
+        send_sms( '%s %s %dm %sdeg %skph %ssats %s' % ( p['latitude'],
                   p['longitude'], p['altitude'], p['course'], p['speed'], 
                   p['satellites'], i ) )
     else:
@@ -70,9 +73,10 @@ recovery_altitude = 3000
 # altitude it transitions to Recovery mode.
 
 state = ''
-set_state( 'LAUNCH' )
 sms.init()
 gps2.init()
+
+set_state( 'LAUNCH' )
 
 # The rules for the states are as follows:
 #
@@ -88,27 +92,35 @@ gps2.init()
 #   Recovery: get GPS position every 1 minute and SMS
 
 while 1:
-    position = gps2.get()
+    try:
+        position = gps2.get()
 
-    if state == 'LAUNCH':
-        report_position(position)
-        if position['valid'] and ( position['altitude'] > ascent_altitude ):
-            set_state( 'ASCENT' )
-    elif state == 'ASCENT':
-        report_position(position)
-        if position['valid'] and ( position['altitude'] > flight_altitude ):
-            set_state( 'FLIGHT' )
-    elif state == 'FLIGHT':
-        if position['valid'] and ( position['altitude'] < recovery_altitude ):
-            set_state( 'RECOVERY' )
-    elif state == 'RECOVERY':
-        report_position(position)
+        if state == 'LAUNCH':
+            report_position(position)
+            if position['valid'] and \
+               ( position['altitude'] > ascent_altitude ):
+                set_state( 'ASCENT' )
+        elif state == 'ASCENT':
+            report_position(position)
+            if position['valid'] and \
+               ( position['altitude'] > flight_altitude ):
+               set_state( 'FLIGHT' )
+        elif state == 'FLIGHT':
+            if position['valid'] and \
+               ( position['altitude'] < recovery_altitude ):
+               set_state( 'RECOVERY' )
+        elif state == 'RECOVERY':
+            report_position(position)
 
-    if state == 'LAUNCH' or state == 'RECOVERY':
-        delay = 1
-    elif state == 'ASCENT':
-        delay = 2
-    else:
-        delay = 5
+        if state == 'LAUNCH' or state == 'RECOVERY':
+            delay = 1
+        elif state == 'ASCENT':
+            delay = 2
+        else:
+            delay = 5
 
-    MOD.sleep(delay * 600)
+        MOD.sleep(delay * 600)
+
+    except:
+        logger.log( "Caught exception in main loop: %s" % sys.exc_info()[1] )
+

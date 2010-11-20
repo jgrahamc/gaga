@@ -20,3 +20,8 @@ TODO
 1. Need to contact Telit and ask them what happens to GPS access above
 the COCOM limit to make sure gps2 module handles the failure more
 correctly.
+
+2. Should delete all files on the Telit module with a clean Makefile
+command
+
+3. Performs check the checksum of the loaded scripts in upload
