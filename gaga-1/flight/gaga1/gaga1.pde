@@ -9,29 +9,23 @@
 // 3. Transmit temperature and position as string using RTTY
 
 #include "rtty.h"
+#include "temp.h"
 
 void setup()
 {
+    Serial.begin(9600);
+
     rtty_init();
+    temp_init();
 }
 
 void loop()
 {
-    char test[255];
-    sprintf( test, "GAGA-1 High Altitude Balloon Test Transmission on 434.650 @ 10mW" );
-    rtty_send(test);
-    
-    delay(5000);
+  Serial.print( temp_internal() );
+  Serial.print( "\n" );
+  delay(5000);
 }
 
-// ---------------------------------------------------------------------------------
-// GPS Code
-// ---------------------------------------------------------------------------------
-
-
-// ---------------------------------------------------------------------------------
-// Temperature Code
-// ---------------------------------------------------------------------------------
 
 
 

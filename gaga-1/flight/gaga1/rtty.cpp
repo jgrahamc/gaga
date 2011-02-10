@@ -5,20 +5,13 @@
 // These are RTTY functions that send RTTY using the attached
 // Radiometrix NTX2
 
-// ---------------------------------------------------------------------------------
-// RTTY Code
-//
-// Code to send strings via RTTY.  The RTTY parameters are defined by constants
-// below.
-// ---------------------------------------------------------------------------------
-
 #include "rtty.h"
 
 // These are the digital pins used to control the Radiometrix NTX2
 // module.  TX0/TX1 are for the two tones used for RTTY.
 
-#define TX0 8
-#define TX1 7
+#define TX0 10
+#define TX1 9
 
 // rtty_init: Set up the pins used to control the radio module
 void rtty_init()
