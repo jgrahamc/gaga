@@ -37,7 +37,7 @@ int ds1821_read_bit( int pin ) // Arduino pin the DS1821 is on
 {
   ds1821_drive_low( pin );
   
-  // The read slot is 60us.  Start buy pushing the bus low and
+  // The read slot is 60us.  Start by pushing the bus low and
   // wait 1us, then switch to input mode.  Data is valid for 15us
   // and read the state from the DS1821.  
   
