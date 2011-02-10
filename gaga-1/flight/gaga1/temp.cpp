@@ -66,6 +66,13 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
    low -= 256;
   }   
 
+  // If the slope value were zero then something has gone very wrong so fail
+  // by return absolute zero
+  
+  if ( slope == 0 ) {
+      return -2730;
+  }
+
   // See datasheet for explanation of this calculation.  Working here in tenths of
   // degrees since can't do floating point arithmetic.
   
