@@ -27,7 +27,7 @@ int ds1821_reset( int pin ) // Arduino pin the DS1821 is on
   delayMicroseconds( 65 );
 
   int bus = digitalRead(pin);
-  delayMicroseconds( 175 ); 
+  delayMicroseconds( 415 ); 
 
   return ( bus == LOW );
 }
