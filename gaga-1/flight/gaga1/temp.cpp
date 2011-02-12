@@ -7,6 +7,7 @@
 
 #include "temp.h"
 #include "ds1821.h"
+#include "fdr.h"
 
 // These are the pins where the sensors are attached.  Each sensor has a single pin.
 
@@ -83,14 +84,18 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
 // degrees C
 int temp_internal()
 {
-  return temp_get(INTERNAL);
+  int t = temp_get(INTERNAL);
+  fdr_min_internal( t );
+  return t;
 }
 
 // temp_external: retrieve the external temperature of the capsule in tenths of
 // degrees C
 int get_external_temp()
 {
-  return temp_get(EXTERNAL);
+  int t = temp_get(EXTERNAL);
+  fdr_min_external( t );
+  return t;
 }
 
 

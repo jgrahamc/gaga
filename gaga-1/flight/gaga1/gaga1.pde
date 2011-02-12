@@ -10,6 +10,12 @@
 
 #include "rtty.h"
 #include "temp.h"
+#include "fdr.h"
+
+// This is only here so that the Arduino development environment will go and find the EEPROM
+// library and include it in the program.  This is an ugly hack and shouldn't need to be here.
+
+#include <EEPROM.h>
 
 void setup()
 {
@@ -17,6 +23,7 @@ void setup()
 
     rtty_init();
     temp_init();
+    fdr_init();
 }
 
 void loop()
