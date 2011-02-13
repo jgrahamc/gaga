@@ -15,9 +15,12 @@
 // These defines specify memory locations in the EEPROM where values are stored
 
 #define FDR_BOOT 0
+
+#define FDR_BOTTOM 1
 #define FDR_ALT 1
 #define FDR_INT 3
 #define FDR_EXT 5
+#define FDR_TOP FDR_EXT + 2
 
 // This is the offset inside the EEPROM where data is written.  See explanation
 // in fdr_init()
@@ -88,10 +91,15 @@ void fdr_init()
   //
   // The boot counter is used to calculate an offset into the EEPROM which the read/write functions
   // will use.
+  // 
+  // Since we might actually use more than six bytes the FDR_TOP and FDR_BOTTOM macros are used
+  // to calculate how much will fit in memory.
   
   unsigned int boot = EEPROM.read( FDR_BOOT );
   
-  if ( boot >= 169 ) {
+  unsigned int slots = 1023 / ( FDR_TOP - FDR_BOTTOM ) - 1;
+  
+  if ( boot >= slots ) {
     boot = 0;
   } else {
     boot++;
@@ -99,7 +107,7 @@ void fdr_init()
   
   EEPROM.write( FDR_BOOT, boot );
  
-  fdr_offset = boot * 6;
+  fdr_offset = boot * ( FDR_TOP - FDR_BOTTOM );
   
   fdr_write_word( FDR_ALT, 0x0000 );
   fdr_write_int(  FDR_INT, 0x7FFF );
