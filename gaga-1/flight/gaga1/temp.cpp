@@ -39,6 +39,7 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
     return -2730;
   }
   
+  int status = 0;
   for ( int i = 0; i < 100; ++i ) {
     delayMicroseconds(10000);
     
@@ -47,10 +48,15 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
         return -2731;
     }
     
-    int status = ds1821_read_bits( 8, pin );
+    status = ds1821_read_bits( 8, pin );
     if ( status & 0x80 ) {
       break;
     }
+  }
+  
+  if ( ( status & 0x80 ) == 0 ) {
+    sei();
+    return -2732;
   }
 
   // Now read the actual temperature value followed by information used
@@ -59,24 +65,24 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
   
   if ( !ds1821_write_bits( 8, 0xAA, pin ) ) {
      sei();
-     return -2732;
+     return -2733;
   }
   
   int low = ds1821_read_bits( 8, pin );
    
   if ( !ds1821_write_bits( 8, 0xA0, pin ) ) {
     sei();
-    return -2733;
+    return -2734;
   }
   int remaining = ds1821_read_bits( 9, pin );
 
   if ( !ds1821_write_bits( 8, 0x41, pin ) ) {
     sei();
-    return -2734;
+    return -2735;
   }
   if ( !ds1821_write_bits( 8, 0xA0, pin ) ) {
     sei();
-    return -2735;
+    return -2736;
   }
   int slope = ds1821_read_bits( 9, pin );
    
@@ -93,7 +99,7 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
   // by return absolute zero
   
   if ( slope == 0 ) {
-      return -2736;
+      return -2737;
   }
 
   // See datasheet for explanation of this calculation.  Working here in tenths of
@@ -107,7 +113,11 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
 int temp_internal()
 {
   int t = temp_get(INTERNAL);
-  fdr_min_internal( t );
+  
+  if ( t > -2730 ) {
+    fdr_min_internal( t );
+  }
+
   return t;
 }
 
@@ -116,7 +126,11 @@ int temp_internal()
 int get_external_temp()
 {
   int t = temp_get(EXTERNAL);
-  fdr_min_external( t );
+  
+  if ( t > -2730 ) {
+    fdr_min_external( t );
+  }
+  
   return t;
 }
 
