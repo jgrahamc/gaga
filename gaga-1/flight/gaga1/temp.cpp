@@ -22,6 +22,8 @@ void temp_init()
 }
 
 // temp_get: Read the temperature from a DS1821 and return it in tenths of degrees C
+// If it returns a value near absolute zero then this indicates that an error occurred
+// while reading the temperature sensor.
 int temp_get( int pin ) // Arduino pin the DS1821 is attached to
 {
   // The timing is very tight so disable interrupts during this action
@@ -32,12 +34,19 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
   // 1s so have to loop reading the status register to see if bit 7 is set. 
   // When it is set the conversion has completed.
   
-  ds1821_write_bits( 8, 0xEE, pin );
+  if ( !ds1821_write_bits( 8, 0xEE, pin ) ) {
+    sei();
+    return -2730;
+  }
   
   for ( int i = 0; i < 100; ++i ) {
     delayMicroseconds(10000);
     
-    ds1821_write_bits( 8, 0xAC, pin );
+    if ( !ds1821_write_bits( 8, 0xAC, pin ) ) {
+        sei();
+        return -2731;
+    }
+    
     int status = ds1821_read_bits( 8, pin );
     if ( status & 0x80 ) {
       break;
@@ -48,14 +57,27 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
   // to calculate the tenths of degrees.  The exact calculation is
   // detailed in the DS1821 datasheet.
   
-  ds1821_write_bits( 8, 0xAA, pin );
+  if ( !ds1821_write_bits( 8, 0xAA, pin ) ) {
+     sei();
+     return -2732;
+  }
+  
   int low = ds1821_read_bits( 8, pin );
    
-  ds1821_write_bits( 8, 0xA0, pin );
+  if ( !ds1821_write_bits( 8, 0xA0, pin ) ) {
+    sei();
+    return -2733;
+  }
   int remaining = ds1821_read_bits( 9, pin );
 
-  ds1821_write_bits( 8, 0x41, pin );
-  ds1821_write_bits( 8, 0xA0, pin );
+  if ( !ds1821_write_bits( 8, 0x41, pin ) ) {
+    sei();
+    return -2734;
+  }
+  if ( !ds1821_write_bits( 8, 0xA0, pin ) ) {
+    sei();
+    return -2735;
+  }
   int slope = ds1821_read_bits( 9, pin );
    
   sei();
@@ -71,7 +93,7 @@ int temp_get( int pin ) // Arduino pin the DS1821 is attached to
   // by return absolute zero
   
   if ( slope == 0 ) {
-      return -2730;
+      return -2736;
   }
 
   // See datasheet for explanation of this calculation.  Working here in tenths of

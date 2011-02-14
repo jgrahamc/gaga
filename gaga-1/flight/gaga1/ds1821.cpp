@@ -98,17 +98,21 @@ int ds1821_read_bits( int bits, // Number of bits to read
 }
 
 // ds1821_write_bits: write a number of bits to the DS1821
-void ds1821_write_bits( int bits, // Number of bits to write
+int ds1821_write_bits( int bits, // Number of bits to write
             int w,  // The number to write bits from
             int pin ) // Arduino pin the DS1821 is on
 {
-  ds1821_reset(pin);
+  if ( !ds1821_reset(pin) ) {
+    return 0;
+  }
 
   while ( bits > 0 ) {
     ds1821_write_bit( w & 1, pin );
     w >>= 1;
     --bits;
   }
+  
+  return 1;
 }
 
 

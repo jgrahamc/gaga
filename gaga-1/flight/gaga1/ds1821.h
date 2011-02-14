@@ -10,7 +10,7 @@
 #include "WProgram.h"
 
 int ds1821_read_bits( int bits, int pin );
-void ds1821_write_bits( int bits, int w, int pin );
+int ds1821_write_bits( int bits, int w, int pin );
 
 #endif // INCLUDED_DS1821
 

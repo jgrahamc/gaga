@@ -16,11 +16,11 @@
 
 #define FDR_BOOT 0
 
-#define FDR_BOTTOM 1
-#define FDR_ALT 1
-#define FDR_INT 3
-#define FDR_EXT 5
-#define FDR_TOP FDR_EXT + 2
+#define FDR_BOTTOM (FDR_BOOT + 1)
+#define FDR_ALT FDR_BOTTOM
+#define FDR_INT (FDR_ALT + 2)
+#define FDR_EXT (FDR_INT + 2)
+#define FDR_TOP (FDR_EXT + 2)
 
 // This is the offset inside the EEPROM where data is written.  See explanation
 // in fdr_init()
