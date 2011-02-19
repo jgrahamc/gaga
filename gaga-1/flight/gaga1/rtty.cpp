@@ -10,8 +10,8 @@
 // These are the digital pins used to control the Radiometrix NTX2
 // module.  TX0/TX1 are for the two tones used for RTTY.
 
-#define TX0 10
-#define TX1 9
+#define TX0 8
+#define TX1 3
 
 // rtty_init: Set up the pins used to control the radio module
 void rtty_init()

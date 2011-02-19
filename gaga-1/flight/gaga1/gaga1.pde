@@ -19,18 +19,27 @@
 
 void setup()
 {
-    Serial.begin(9600);
-
     rtty_init();
     temp_init();
     fdr_init();
 }
 
+// The number of milliseconds between each report transmitted
+#define INTER_REPORT_DELAY 5000
+
 void loop()
 {
-  Serial.print( temp_internal() );
-  Serial.print( "\n" );
-  delay(5000);
+  #define MAX_REPORT 128
+  char report[MAX_REPORT+1] = "$$GAGA,";
+
+  strcat( report, temp_format(temp_internal()) );
+  strcat( report, temp_format(temp_external()) );  
+  
+  strcat( report, "\n" );
+
+  rtty_send(report);
+  
+  delay(INTER_REPORT_DELAY);
 }
 
 

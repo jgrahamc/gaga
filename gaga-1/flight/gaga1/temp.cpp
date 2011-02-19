@@ -11,14 +11,17 @@
 
 // These are the pins where the sensors are attached.  Each sensor has a single pin.
 
-#define INTERNAL 8
-#define EXTERNAL 9
+#define INTERNAL 12
+#define EXTERNAL 11
 
 // temp_init: set up the sensors for use
 void temp_init() 
 {
   pinMode(INTERNAL, INPUT);
   digitalWrite(INTERNAL, LOW);
+  
+  pinMode(EXTERNAL, INPUT);
+  digitalWrite(EXTERNAL, LOW);
 }
 
 // temp_get: Read the temperature from a DS1821 and return it in tenths of degrees C
@@ -123,7 +126,7 @@ int temp_internal()
 
 // temp_external: retrieve the external temperature of the capsule in tenths of
 // degrees C
-int get_external_temp()
+int temp_external()
 {
   int t = temp_get(EXTERNAL);
   
@@ -134,5 +137,26 @@ int get_external_temp()
   return t;
 }
 
+// temp_format: format a temperature returned by temp_internal or temp_external.
+// This function understands the error temperatures returned by those functions.
+char * temp_format(int temp) // Temperature returned by call to temp_in/external
+{
+  #define MAX_TEMP_STRING 32
+  static char temp_string[MAX_TEMP_STRING+1];
+
+  // The error messages are signalled by numbers below -273.0C.  The temperatures
+  // are in tenths of degrees.
+
+  if ( temp <= -2370 ) {
+    int error = temp + 2730;
+    sprintf( temp_string, "Error: %d,", -error );
+  } else {
+    int tenths = abs(temp % 10);
+    int cents = temp/10;
+    sprintf( temp_string, "%d.%d,", cents, tenths );
+  }
+  
+  return &temp_string[0];
+}
 
 

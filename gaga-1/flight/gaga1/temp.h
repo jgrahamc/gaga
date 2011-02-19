@@ -13,6 +13,7 @@
 void temp_init();
 int temp_internal();
 int temp_external();
+char * temp_format(int temp);
 
 #endif // INCLUDED_TEMP
 
