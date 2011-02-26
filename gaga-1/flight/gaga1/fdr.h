@@ -10,7 +10,7 @@
 
 #include "WProgram.h"
 
-void fdr_init();
+unsigned int fdr_init();
 void fdr_max_altitude( unsigned int alt );
 void fdr_min_internal( int temp );
 void fdr_min_external( int temp );

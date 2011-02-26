@@ -82,7 +82,7 @@ void fdr_write_int( int mem,  // Memory location to write to
 }
 
 // fdr_init: reset the initial values in the data recorder
-void fdr_init()
+unsigned int fdr_init()
 {
   // This stores six bytes of information and the Arduino has 1K of EEPROM, so I can store 170
   // lots of information.  To achieve this byte 0 contains a 'boot counter' which is used to
@@ -112,6 +112,8 @@ void fdr_init()
   fdr_write_word( FDR_ALT, 0x0000 );
   fdr_write_int(  FDR_INT, 0x7FFF );
   fdr_write_int(  FDR_EXT, 0x7FFF );  
+  
+  return boot;
 }
 
 // fdr_max_altitude: store the maximum altitude attained

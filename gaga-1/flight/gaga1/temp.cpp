@@ -156,7 +156,7 @@ char * temp_format(int temp) // Temperature returned by call to temp_in/external
     sprintf( temp_string, "%d.%d,", cents, tenths );
   }
   
-  return &temp_string[0];
+  return temp_string;
 }
 
 
