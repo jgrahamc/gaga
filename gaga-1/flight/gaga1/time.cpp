@@ -33,7 +33,7 @@ unsigned long time_elapsed()
 // time_format: returns a string containing the time in seconds
 char * time_format( unsigned long elapsed ) // Time returned by time_elapsed()
 {
-  #define MAX_TIME_STRING 32
+#define MAX_TIME_STRING 32
   static char time_string[MAX_TIME_STRING+1];
 
   sprintf( time_string, "%ld,", elapsed );

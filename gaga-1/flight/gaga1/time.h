@@ -11,8 +11,7 @@
 #include "WProgram.h"
 
 void time_init();
-unsigned long time_elapsed();
-char * time_format( unsigned long elapsed );
+char * time_format();
 
 #endif // INCLUDED_TIME
 
