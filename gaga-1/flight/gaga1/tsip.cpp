@@ -7,6 +7,11 @@
 
 #include "tsip.h"
 
+#include "SoftwareSerial.h"
+
+// The GPS is attached to pin 6 TXA and pin 2 RXA
+SoftwareSerial gps( 6, 2 );
+
 // Standard Trimble definitions for the start of a packet and the end
 #define DLE 0x10
 #define ETX 0x03
@@ -48,7 +53,18 @@ void tsip_send( BYTE * packet,  // Packet data to send
   buffer[i++] = DLE;
   buffer[i++] = ETX;
   
-  Serial.write( buffer, i );
+  Serial.print( "tsip_send: " );
+  
+  i = 0;
+  j += 3;
+  while ( j > 0 ) {
+    Serial.print( buffer[i], HEX );
+    Serial.print( " " );
+    gps.write( buffer[i] );
+    ++i;
+    --j;
+  }
+  Serial.println();
 }
 
 // tsip_get: return the position structure containing the latest fix
@@ -66,7 +82,7 @@ void tsip_init()
   last.vertical  = 0;
   last.fix       = 0;
   
-  Serial.begin(9600);
+  gps.begin(9600);
   
   // Tell the GPS how to report GPS position and time information.  This will come in
   // automatically and be handled by tsip_handle below.
@@ -135,6 +151,15 @@ void tsip_packet( BYTE * packet,  // The packet data
                   int    length ) // Number of bytes in packet
 {
   BYTE function = packet[0];
+
+  Serial.print( "tsip_packet: " );
+  int i = 0;
+  while ( i < length ) {
+    Serial.print( packet[i], HEX );
+    Serial.print( " " );
+    ++i;
+  }
+  Serial.println();
   
   switch ( function ) {
     case TSIP_REPORT_LLA_POSITION:
@@ -154,18 +179,18 @@ void tsip_packet( BYTE * packet,  // The packet data
 // handle the ones we are interested in
 void tsip_handle()
 {
-  while ( Serial.available() ) {
-     BYTE b = Serial.read();
+  while ( gps.available() ) {
+     BYTE b = gps.read();
      
      if ( b == DLE ) {
-       BYTE n = Serial.peek();
+       BYTE n = gps.peek();
        
        // This happens if we are escaping DLE or have ETX inside a packet.  In that
        // case we haven't found the start of a packet and so we need to move on
        // to the next real DLE
        
        if ( ( n == DLE ) || ( n == ETX ) ) {
-         Serial.read();
+         gps.read();
        } else {
          
          // Reach here when we've found a valid DLE and removed it from the 
@@ -175,14 +200,13 @@ void tsip_handle()
          BYTE packet[MAX_PACKET];  // TSIP documentation specifies 255 byte max
          int i = 0;
    
-         while ( ( Serial.available() ) && ( i < MAX_PACKET ) ) {
-           b = Serial.read();
-           
+         while ( ( gps.available() ) && ( i < MAX_PACKET ) ) {
+           b = gps.read();
            if ( b == DLE ) {
-             if ( !Serial.available() ) {
+             if ( !gps.available() ) {
                break;
              } else {
-               b = Serial.read();
+               b = gps.read();
                  
                if ( b == ETX ) {
                  tsip_packet( packet, i );

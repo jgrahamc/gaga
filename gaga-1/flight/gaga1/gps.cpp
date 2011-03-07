@@ -36,16 +36,16 @@ char * gps_##_a()                             \
 }
 
 // gps_latitude: return the current latitude in format +DD.dddd,
-GETTER(latitude,"%2.4d,")
+GETTER(latitude,"%.4f,")
 
 // gps_longitude: return the current longitude in format +DDD.dddd,
-GETTER(longitude,"%3.4d,")
+GETTER(longitude,"%.4f,")
 
 // gps_altitude: return the current altitude
-GETTER(altitude,"%d,")
+GETTER(altitude,"%f,")
 
 // gps_vertical: return the vertical speed in format +DD.dd
-GETTER(vertical,"%2.2d,")
+GETTER(vertical,"%.2f,")
 
 // gps_fix: return the time of last fix in format HHmmss
 char * gps_fix()

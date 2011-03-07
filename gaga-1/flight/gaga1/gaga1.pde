@@ -26,6 +26,8 @@ int boot;
 
 void setup()
 {
+    Serial.begin( 9600 );
+
     gps_init();
     rtty_init();
     temp_init();
@@ -107,7 +109,8 @@ void loop()
                                                       // --------
                                                       // 70 chars
 
-  rtty_send(report);
+  Serial.print( report );
+  // rtty_send(report);
   
   // Wait a number of seconds for the next report, but while waiting
   // keep receiving data from the GPS
