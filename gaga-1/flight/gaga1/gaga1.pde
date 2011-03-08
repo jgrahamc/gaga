@@ -92,12 +92,17 @@ void loop()
   strcat( report, temp_format(temp_internal()) );     //  4 chars
   strcat( report, temp_format(temp_external()) );     //  4 chars
   
-  strcat( report, gps_fix() );                        //  7 chars
-  strcat( report, gps_latitude() );                   //  9 chars
-  strcat( report, gps_longitude() );                  // 10 chars
-  strcat( report, gps_altitude() );                   //  6 chars
-  strcat( report, gps_vertical() );                   //  7 chars
-  
+  if ( gps_have_fix() ) {
+    strcat( report, gps_fix() );                        //  7 chars
+    strcat( report, gps_latitude() );                   //  9 chars
+    strcat( report, gps_longitude() );                  // 10 chars
+    strcat( report, gps_altitude() );                   //  6 chars
+    strcat( report, gps_vertical() );                   //  7 chars
+    
+    gps_clear();
+  } else {
+    strcat( report, "No fix,,,,," );
+  }
 #define MAX_BOOT_STRING 32
   char boot_string[MAX_BOOT_STRING];
   sprintf( boot_string, "%d,", boot );                //  6 chars

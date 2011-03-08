@@ -101,7 +101,7 @@ void tsip_init()
 
 // Helper to convert from a single precision value returned by the GPS to an Arduino float
 
-#define COPY_SINGLE(_a,_b)
+#define COPY_SINGLE(_a,_b) last._a = *((float *)_b);
 
 // tsip_position: handle the reported GPS position
 void tsip_position( BYTE * packet,  // Pointer to the data inside an 0x4A packet

@@ -17,13 +17,18 @@ struct position last_fix;
 // gps_init: 
 void gps_init()
 {
+  gps_clear();  
+  tsip_init();
+}
+
+// gps_clear: clear the last fix information 
+void gps_clear()
+{
   last_fix.latitude  = 0;
   last_fix.longitude = 0;
   last_fix.altitude  = 0;
   last_fix.vertical  = 0;
   last_fix.fix       = 0;
-  
-  tsip_init();
 }
 
 #define MAX_GETTER_STRING 32
@@ -81,3 +86,10 @@ void gps_update()
  
  fdr_max_altitude( int(last_fix.fix) );
 }
+
+// gps_have_fix: returns 1 if we have a fix, 0 if not
+int gps_have_fix()
+{
+  return ( last_fix.fix != 0 );
+}
+

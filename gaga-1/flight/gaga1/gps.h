@@ -20,4 +20,7 @@ char * gps_longitude();
 char * gps_vertical();
 char * gps_fix();
 
+int gps_have_fix();
+void gps_clear();
+
 #endif // INCLUDED_GPS

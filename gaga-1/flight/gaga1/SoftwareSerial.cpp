@@ -454,32 +454,50 @@ void SoftwareSerial::write(uint8_t b)
   tx_pin_write(_inverse_logic ? HIGH : LOW);
   tunedDelay(_tx_delay + XMIT_START_ADJUSTMENT);
 
+  byte parity = 0;
+
   // Write each of the 8 bits
   if (_inverse_logic)
   {
     for (byte mask = 0x01; mask; mask <<= 1)
     {
-      if (b & mask) // choose bit
+      if (b & mask) { // choose bit
         tx_pin_write(LOW); // send 1
-      else
+        parity = 1 - parity;
+      } else
         tx_pin_write(HIGH); // send 0
     
       tunedDelay(_tx_delay);
     }
 
+    if ( parity ) {
+        tx_pin_write(HIGH);
+    } else {
+        tx_pin_write(LOW);
+    }
+    tunedDelay(_tx_delay);
+    
     tx_pin_write(LOW); // restore pin to natural state
   }
   else
   {
     for (byte mask = 0x01; mask; mask <<= 1)
     {
-      if (b & mask) // choose bit
+      if (b & mask) { // choose bit
         tx_pin_write(HIGH); // send 1
-      else
+        parity = 1 - parity;
+      } else
         tx_pin_write(LOW); // send 0
     
       tunedDelay(_tx_delay);
     }
+
+    if ( parity ) {
+        tx_pin_write(LOW); // send 1
+    } else {
+        tx_pin_write(HIGH); // send 1
+    }
+    tunedDelay(_tx_delay);
 
     tx_pin_write(HIGH); // restore pin to natural state
   }
