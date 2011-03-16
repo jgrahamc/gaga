@@ -23,8 +23,8 @@ def powerOnOff(a):
 # 002544.000,5238.3233N,00211.3308W,1.2,14.3,3,170.10,0.36,0.19,051110,08
 
 def getActualPosition():
-    utc = time.strftime('%H%M%S.000', time.gmtime())
-    day = time.strftime('%d%m%y', time.gmtime())
+    utc = time.strftime('%H%M%S.000', time.gmtime(time.time()))
+    day = time.strftime('%d%m%y', time.gmtime(time.time()))
     if random.randint(0,100) < 10:
         l = random.randint(0,1) * 2
         return '%s,,,,,%d,,,,%s,00' % ( utc, l, day )
@@ -34,9 +34,9 @@ def getActualPosition():
         global gpstime
         spd = random.randint(0,5000)/100
         if gpsup:
-            gpsalt += (time.time() - gpstime) * random.randint(30,50)
+            gpsalt = gpsalt + (time.time() - gpstime) * random.randint(30,50)
         else:
-            gpsalt -= (time.time() - gpstime) * random.randint(30,50)
+            gpsalt = gpsalt - (time.time() - gpstime) * random.randint(30,50)
         if gpsalt > 40000:
             gpsup = 0
         if gpsalt < 20:
@@ -51,3 +51,5 @@ def getActualPosition():
 def getAntennaVoltage():
     return random.randint(0,3900)
 
+def resetMode(a):
+    return 1

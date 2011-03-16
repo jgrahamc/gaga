@@ -15,5 +15,5 @@ def sleep(a):
 # Get the number of seconds since January 1, 2000
 
 def secCounter():
-    return int(time.time() - calendar.timegm(time.strptime('1 Jan 2000', '%d %b %Y')))
+    return int(time.time())
 
