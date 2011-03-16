@@ -36,10 +36,10 @@ def temperature():
     else:
         return int(m[1])
 
-# Gets the time since start in seconds and returns a string of the
+# Gets the time since start in seconds
 # form T+nnn.  
 
-def timestamp():
+def elapsed():
     t = MOD.secCounter()
 
     global epoch
@@ -48,4 +48,11 @@ def timestamp():
 
     t = t - epoch
 
-    return "T+%d" % t
+    return t
+
+# Gets the time since start in seconds and returns a string of the
+# form T+nnn.  
+
+def timestamp():
+    return "T+%d" % elapsed()
+

@@ -44,5 +44,8 @@ def voltage():
     return GPS.getAntennaVoltage()
 
 
-     
-                 
+# Resets the GPS performing a cold restart
+
+def reset():
+    logger.log( 'Performing GPS cold restart' )
+    GPS.resetMode(1)
