@@ -19,7 +19,7 @@ clean:
 	@rm $(OBJ)
 	@rm $(UPL)
 
-TO_UPL := $(SRC)
+TO_UPL := $(OBJ)
 UPL := $(addprefix .upload-,$(TO_UPL))
 
 .PHONY: upload
