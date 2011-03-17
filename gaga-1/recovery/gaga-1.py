@@ -26,12 +26,10 @@ import logger
 #
 # This function also reports the current antenna voltage as a proxy
 # for battery voltage and the current module internal temperature
-#
-# If there has been no GPS lock for 30 minutes this will then perform
-# a cold reset
 
 def report_position(p):
     global state
+
     v = gps2.voltage()
     t = util.temperature()
     i = '(%dmV, %dC, %s)' % ( v, t, state )
@@ -39,15 +37,11 @@ def report_position(p):
     global last_lock
 
     if p['valid']:
-        last_lock = util.elapsed()
         send_sms( '%s %s %dm %sdeg %skph %ssats %s' % ( p['latitude'],
                   p['longitude'], p['altitude'], p['course'], p['speed'], 
                   p['satellites'], i ) )
     else:
         send_sms( 'No lock for %ds %s' % ( util.elapsed() - last_lock, i ) ) 
-        if util.elapsed() > ( last_lock + 30 * 60 ):
-            gps2.reset()
-            last_lock = util.elapsed()
 
 # Performs a state transition updating the global state variable and
 # SMSing the new state
@@ -106,10 +100,20 @@ set_state( 'LAUNCH' )
 #   transition to Recovery mode
 #
 #   Recovery: get GPS position every 1 minute and SMS
+#
+# If there has been no GPS lock for 30 minutes this will then perform
+# a cold reset
 
 while 1:
-#    try:
+    try:
         position = gps2.get()
+
+        if position['valid']:
+            last_lock = util.elapsed()
+        else:
+            if util.elapsed() > ( last_lock + 30 * 60 ):
+                gps2.reset()
+                last_lock = util.elapsed()
 
         if state == 'LAUNCH':
             report_position(position)
@@ -137,5 +141,5 @@ while 1:
 
         MOD.sleep(delay * 600)
 
-#    except:
-#        logger.log( "Caught exception in main loop: %s" % sys.exc_info()[1] )
+    except:
+        logger.log( "Caught exception in main loop: %s" % sys.exc_info()[1] )
