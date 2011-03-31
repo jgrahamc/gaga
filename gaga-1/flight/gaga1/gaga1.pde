@@ -71,7 +71,7 @@ void loop()
   
   // The report format is as follows (fields are comma separated)
   //
-  // Flight name: $$GAGA1
+  // Flight name: $$GAGA-1
   // Seconds since launch
   // UTC time (HHmmss)
   // Latitude in dotted decimal format (+DD.dddd)
@@ -85,13 +85,10 @@ void loop()
   // This is followed by a * and the checksum and a newline
   
   #define MAX_REPORT 128
-  char report[MAX_REPORT+1] = "$$GAGA,";              //  7 chars
+  char report[MAX_REPORT+1] = "$$GAGA-1,";              //  9 chars
 
-  strcat( report, time_format(time_elapsed()) );      //  6 chars
+  strcat( report, time_format(time_elapsed()) );        //  6 chars
 
-  strcat( report, temp_format(temp_internal()) );     //  4 chars
-  strcat( report, temp_format(temp_external()) );     //  4 chars
-  
   if ( gps_have_fix() ) {
     strcat( report, gps_fix() );                        //  7 chars
     strcat( report, gps_latitude() );                   //  9 chars
@@ -103,6 +100,10 @@ void loop()
   } else {
     strcat( report, "No fix,,,,," );
   }
+  
+  strcat( report, temp_format(temp_internal()) );     //  4 chars
+  strcat( report, temp_format(temp_external()) );     //  4 chars
+
 #define MAX_BOOT_STRING 32
   char boot_string[MAX_BOOT_STRING];
   sprintf( boot_string, "%d,", boot );                //  6 chars
@@ -112,7 +113,7 @@ void loop()
   
   strcat( report, "\n" );                             //  1 char
                                                       // --------
-                                                      // 70 chars
+                                                      // 72 chars
 
   Serial.print( report );
   // rtty_send(report);
