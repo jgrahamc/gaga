@@ -84,7 +84,11 @@ void gps_update()
  fix %= 24 * 60 * 60;
  last_fix.fix = fix; 
  
- fdr_max_altitude( int(last_fix.fix) );
+ // Ensure that we only keep the integer part of altitude
+ 
+ last_fix.altitude = floor(last_fix.altitude);
+ 
+ fdr_max_altitude( int(last_fix.altitude) );
 }
 
 // gps_have_fix: returns 1 if we have a fix, 0 if not
