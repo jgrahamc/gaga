@@ -52,14 +52,10 @@ void tsip_send( BYTE * packet,  // Packet data to send
   
   buffer[i++] = DLE;
   buffer[i++] = ETX;
-  
-  Serial.print( "tsip_send: " );
-  
+    
   i = 0;
   j += 3;
   while ( j > 0 ) {
-    Serial.print( buffer[i], HEX );
-    Serial.print( " " );
     gps.write( buffer[i] );
     ++i;
     --j;
