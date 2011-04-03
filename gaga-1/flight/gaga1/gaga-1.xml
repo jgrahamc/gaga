@@ -5,7 +5,7 @@
 	<timings>continuous</timings>
 	<txtype>
 		<rtty>
-			<shift>350</shift>
+			<shift>310</shift>
 			<coding>ascii-7</coding>
 			<baud>50</baud>
 			<parity>none</parity>
@@ -33,7 +33,7 @@
 		</field>
 		<field>
 			<seq>3</seq>
-			<dbfield>gps_time</dbfield>
+			<dbfield>time</dbfield>
 			<minsize>0</minsize>
 			<maxsize>6</maxsize>
 			<datatype>time</datatype>
