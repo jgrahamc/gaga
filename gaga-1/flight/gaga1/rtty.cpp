@@ -6,6 +6,7 @@
 // Radiometrix NTX2
 
 #include "rtty.h"
+#include "tsip.h"
 
 // These are the digital pins used to control the Radiometrix NTX2
 // module.  TX0/TX1 are for the two tones used for RTTY.
@@ -40,6 +41,8 @@ void rtty_bit(int b) // Send 0 if b is 0, 1 if otherwise
 // rtty_send: sends a null-terminated string via radio to the ground trackers
 void rtty_send( char * s ) // The null-terminated string to transmit
 {
+  tsip_disable();
+  
   char c;
   while ( c = *s++ ) {
     int i;
@@ -59,5 +62,7 @@ void rtty_send( char * s ) // The null-terminated string to transmit
  
   // Note that when idling RTTY specifies that it be in the 'mark' state (or 1).  This
   // is achieved by the stop bits that were sent at the end of the last character. 
+  
+  tsip_enable();
 }
 

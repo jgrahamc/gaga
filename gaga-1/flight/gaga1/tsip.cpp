@@ -60,7 +60,6 @@ void tsip_send( BYTE * packet,  // Packet data to send
     ++i;
     --j;
   }
-  Serial.println();
 }
 
 // tsip_get: return the position structure containing the latest fix
@@ -78,7 +77,7 @@ void tsip_init()
   last.vertical  = 0;
   last.fix       = 0;
   
-  gps.begin(9600);
+  tsip_enable();
   
   // Tell the GPS how to report GPS position and time information.  This will come in
   // automatically and be handled by tsip_handle below.
@@ -119,6 +118,16 @@ void tsip_position( BYTE * packet,  // Pointer to the data inside an 0x4A packet
   COPY_SINGLE(longitude, &packet[4]  )
   COPY_SINGLE(altitude,  &packet[8]  )
   COPY_SINGLE(fix,       &packet[16] )
+  
+  Serial.print( "TSIP Position:" );
+  Serial.print( last.latitude, 4 );
+  Serial.print( " " );
+  Serial.print( last.longitude, 4 );
+  Serial.print( " " );
+  Serial.print( last.altitude, 2 );
+  Serial.print( " " );
+  Serial.print( last.fix, 2 );
+  Serial.println();
 }
 
 // tsip_velocity: handle the reported GPS velocity
@@ -147,13 +156,11 @@ void tsip_packet( BYTE * packet,  // The packet data
                   int    length ) // Number of bytes in packet
 {
   BYTE function = packet[0];
-
-  Serial.print( "tsip_packet: " );
-  int i = 0;
-  while ( i < length ) {
-    Serial.print( packet[i], HEX );
-    Serial.print( " " );
-    ++i;
+  
+  Serial.print( "TSIP packet: " );
+  for ( int i = 0; i < length; ++i ) {
+      Serial.print( packet[i], HEX );
+      Serial.print( " " );
   }
   Serial.println();
   
@@ -217,5 +224,15 @@ void tsip_handle()
        }
      }
   }
+}
+
+void tsip_enable()
+{
+  gps.begin(9600);
+}
+
+void tsip_disable()
+{
+  gps.end();
 }
 

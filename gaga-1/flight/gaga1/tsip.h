@@ -23,4 +23,7 @@ struct position {
 
 struct position tsip_get();
 
+void tsip_enable();
+void tsip_disable();
+
 #endif // INCLUDED_TSIP
