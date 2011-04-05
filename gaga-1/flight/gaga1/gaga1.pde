@@ -26,7 +26,7 @@ int boot;
 
 void setup()
 {
-
+    Serial.begin(9600);
     gps_init();
     rtty_init();
     temp_init();
@@ -58,7 +58,7 @@ void append_checksum( char * string ) // Pointer to string to be checksummed
 }
 
 // The number of milliseconds between each report transmitted
-#define INTER_REPORT_DELAY 5000
+#define INTER_REPORT_DELAY 10000
 
 // loop:  called repeatedly by the Arduino.  All this does is send a status report via
 // RTTY.
@@ -105,7 +105,7 @@ void loop()
 
 #define MAX_BOOT_STRING 32
   char boot_string[MAX_BOOT_STRING];
-  sprintf( boot_string, "%d,", boot );                //  6 chars
+  sprintf( boot_string, "%d", boot );                //  6 chars
   strcat( report, boot_string );
   
   append_checksum( report );                          //  3 chars
@@ -115,6 +115,7 @@ void loop()
                                                       // 72 chars
 
   rtty_send(report);
+  Serial.print(report);
   
   // Wait a number of seconds for the next report, but while waiting
   // keep receiving data from the GPS
