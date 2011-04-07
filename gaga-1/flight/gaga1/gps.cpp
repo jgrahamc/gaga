@@ -32,36 +32,74 @@ void gps_clear()
 }
 
 #define MAX_GETTER_STRING 32
-#define GETTER(_a,_b)                         \
-char * gps_##_a()                             \
-{                                             \
-  static char string[MAX_GETTER_STRING+1];    \
-  sprintf( string, _b, last_fix._a );         \
-  return string;                              \
-}
 
 // gps_latitude: return the current latitude in format +DD.dddd,
-GETTER(latitude,"%.4f,")
+char * gps_latitude()
+{
+  static char string[MAX_GETTER_STRING+1];
+  dtostrf( last_fix.latitude, 7, 4, string );
+  strcat( string, "," );
+  if ( string[0] == ' ' ) {
+    return &string[1];
+  } else {
+    return string;
+  }  
+  return string;
+}
 
 // gps_longitude: return the current longitude in format +DDD.dddd,
-GETTER(longitude,"%.4f,")
+char * gps_longitude()
+{
+  static char string[MAX_GETTER_STRING+1];
+  dtostrf( last_fix.longitude, 7, 4, string );
+  strcat( string, "," );
+  if ( string[0] == ' ' ) {
+    return &string[1];
+  } else {
+    return string;
+  }  
+}
 
 // gps_altitude: return the current altitude
-GETTER(altitude,"%f,")
+char * gps_altitude()
+{
+  static char string[MAX_GETTER_STRING+1];
+  int l = int(last_fix.altitude);
+  sprintf( string, "%d,", l );
+  return string;
+}
 
 // gps_vertical: return the vertical speed in format +DD.dd
-GETTER(vertical,"%.2f,")
+char * gps_vertical()
+{
+  static char string[MAX_GETTER_STRING+1];
+  dtostrf( last_fix.vertical, 5, 2, string );
+  strcat( string, "," );
+  if ( string[0] == ' ' ) {
+    return &string[1];
+  } else {
+    return string;
+  }  
+}
 
 // gps_fix: return the time of last fix in format HHmmss
 char * gps_fix()
 {
   char string[MAX_GETTER_STRING+1];
-  
-  int fix = last_fix.fix;
-  sprintf( string, "%2d%2d%2d,", fix / (60 * 60),
-    (fix / 60) % 60, fix % 60 );
+
+  long fix = long(last_fix.fix);  
+  long day = 86400;
    
-   return string; 
+  while ( fix > day ) {
+    fix -= day;
+  }   
+  
+  long hours = fix / 3600;
+  fix -= hours * 3600;
+  long mins  = fix / 60;
+  long secs  = fix - ( mins * 60 ); 
+  sprintf( string, "%02ld:%02ld:%02ld,", hours, mins, secs );
+  return string; 
 }
 
 
@@ -72,17 +110,10 @@ void gps_update()
    
   last_fix = tsip_get();
  
-#define RADTODEG(_a) last_fix._a = 360 * last_fix._a / 6.2818
+#define RADTODEG(_a) last_fix._a = 360.0 * last_fix._a / ( 2 * 3.1415926535898 )
  
  RADTODEG(latitude);
  RADTODEG(longitude);
- 
- // The .fix value is the UTC time since the start of the GPS week in seconds
- // We need to convert this to HHmmss in the current day.
- 
- int fix = last_fix.fix;
- fix %= 24 * 60 * 60;
- last_fix.fix = fix; 
  
  // Ensure that we only keep the integer part of altitude
  
